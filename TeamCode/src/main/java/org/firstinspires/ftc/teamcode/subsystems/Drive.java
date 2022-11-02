@@ -41,10 +41,7 @@ public class Drive {
         drive.motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
         drive.motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
         drive.setMotorBraking();
-        // Reverse the right side motors
-        // Reverse left motors if you are using NeveRests
-        //drive.motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        //drive.motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
+
 
         // Return the initialized drive.
         return drive;
@@ -55,21 +52,21 @@ public class Drive {
         motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
     public void setMotorBraking()
     {
         motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
     public void setMotorSpeeds (double x, double y, double rx) {
         // Denominator is the largest motor power (absolute value) or 1
         // This ensures all the powers maintain the same ratio, but only when
         // at least one is out of the range [-1, 1]
 
-        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+        double denominator = -1*(Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1));
         if(!boost){
             denominator = denominator*1.4;
         }
