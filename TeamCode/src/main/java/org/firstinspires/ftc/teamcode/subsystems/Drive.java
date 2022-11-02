@@ -14,6 +14,7 @@ public class Drive {
     private DcMotor motorBackLeft;
     private DcMotor motorFrontRight;
     private DcMotor motorBackRight;
+    private boolean boost;
 
     /**
      * This holds a reference to the owner opmode's telemetry object, it is used to send information
@@ -39,7 +40,7 @@ public class Drive {
         drive.motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
         drive.motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
         drive.motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
-
+        drive.setMotorBraking();
         // Reverse the right side motors
         // Reverse left motors if you are using NeveRests
         //drive.motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -49,11 +50,29 @@ public class Drive {
         return drive;
     }
 
+    public void setMotorFloating()
+    {
+        motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+    }
+    public void setMotorBraking()
+    {
+        motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
     public void setMotorSpeeds (double x, double y, double rx) {
         // Denominator is the largest motor power (absolute value) or 1
         // This ensures all the powers maintain the same ratio, but only when
         // at least one is out of the range [-1, 1]
+
         double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+        if(!boost){
+            denominator = denominator*1.4;
+        }
         double frontLeftPower = (y + x + rx) / denominator;
         double backLeftPower = (y - x + rx) / denominator;
         double frontRightPower = (y - x - rx) / denominator;
@@ -63,5 +82,8 @@ public class Drive {
         motorBackLeft.setPower(backLeftPower);
         motorFrontRight.setPower(frontRightPower);
         motorBackRight.setPower(backRightPower);
+    }
+    public void setBoost(boolean boost1){
+        boost = boost1;
     }
 }
