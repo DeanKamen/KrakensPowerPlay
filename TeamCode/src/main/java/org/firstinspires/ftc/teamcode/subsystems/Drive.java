@@ -15,6 +15,8 @@ public class Drive {
     private DcMotor motorFrontRight;
     private DcMotor motorBackRight;
     private boolean boost;
+    private boolean brake;
+    private boolean slowmode;
 
     /**
      * This holds a reference to the owner opmode's telemetry object, it is used to send information
@@ -67,8 +69,15 @@ public class Drive {
         // at least one is out of the range [-1, 1]
 
         double denominator = -1*(Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1));
-        if(!boost){
+        if(!boost || slowmode){
             denominator = denominator*1.4;
+        }
+        if(brake){
+            x=0;
+            y=0;
+        }else if(slowmode){
+            x=x/2;
+            y=y/2;
         }
         double frontLeftPower = (y + x + rx) / denominator;
         double backLeftPower = (y - x + rx) / denominator;
@@ -82,5 +91,17 @@ public class Drive {
     }
     public void setBoost(boolean boost1){
         boost = boost1;
+    }
+    public void setBrake(float howMuchBrake){
+        if(howMuchBrake > 0.03 && howMuchBrake < 0.7){
+            slowmode = true;
+            brake = false;
+        }else if(howMuchBrake > 0.7) {
+            slowmode = false;
+            brake = true;
+        }else{
+            slowmode = false;
+            brake = false;
+        }
     }
 }

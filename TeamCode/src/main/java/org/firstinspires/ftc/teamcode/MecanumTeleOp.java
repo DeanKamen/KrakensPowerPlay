@@ -24,6 +24,7 @@ public class MecanumTeleOp extends LinearOpMode {
             double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
             double rx = gamepad1.right_stick_x;
             drive.setBoost(gamepad1.left_stick_button);
+            drive.setBrake(gamepad1.left_trigger);
             // Send the inputs to the subsystems
             drive.setMotorSpeeds(x, y, rx);
 
