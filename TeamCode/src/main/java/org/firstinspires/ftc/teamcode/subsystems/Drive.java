@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Drive {
@@ -14,6 +16,10 @@ public class Drive {
     private DcMotor motorBackLeft;
     private DcMotor motorFrontRight;
     private DcMotor motorBackRight;
+
+    private Servo servoClaw;
+    private Servo servoHook;
+
     private boolean boost;
     private boolean brake;
     private boolean slowmode;
@@ -34,7 +40,6 @@ public class Drive {
 
         // Create a new instance of Drive
         Drive drive = new Drive();
-
         drive.telemetry = telemetry;
 
         // Set get an instance of DcMotor from the hardware map for each of the drive motors.
@@ -44,7 +49,9 @@ public class Drive {
         drive.motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
         drive.setMotorBraking();
 
-
+        drive.servoClaw = hardwareMap.get(Servo.class, "claw");
+        drive.servoHook = hardwareMap.get(Servo.class, "cone_hook");
+        drive.servoHook.setDirection(Servo.Direction.REVERSE);
         // Return the initialized drive.
         return drive;
     }
@@ -102,6 +109,23 @@ public class Drive {
         }else{
             slowmode = false;
             brake = false;
+        }
+    }
+
+    public void setClawState(boolean buttonDown){
+        telemetry.addData("Claw Position" , servoClaw.getPosition());
+        telemetry.update();
+        if (buttonDown) {
+            servoClaw.setPosition(0.9);
+        } else {
+            servoClaw.setPosition(0);
+        }
+    }
+    public void setHookState(boolean buttonDown){
+        if (buttonDown) {
+            servoHook.setPosition(0.17);
+        }else{
+            servoHook.setPosition(0);
         }
     }
 }
