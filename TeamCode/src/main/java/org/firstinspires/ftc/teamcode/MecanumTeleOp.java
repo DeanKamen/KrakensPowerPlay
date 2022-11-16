@@ -29,6 +29,9 @@ public class MecanumTeleOp extends LinearOpMode {
             drive.setBrake(gamepad1.left_trigger);
             drive.setClawState(gamepad1.right_trigger > 0.01);
             drive.setHookState(gamepad1.right_bumper);
+            if(gamepad1.dpad_right){
+                drive.directionForLength(2000, 1, 0,0);
+            }
             // Send the inputs to the subsystems
             drive.setMotorSpeeds(x, y, rx);
         }

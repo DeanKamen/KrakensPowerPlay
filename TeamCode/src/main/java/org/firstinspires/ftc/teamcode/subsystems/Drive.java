@@ -6,6 +6,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
+import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class Drive {
 
@@ -70,6 +73,13 @@ public class Drive {
         motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
+    public void setMotorsMode(DcMotor.RunMode mode)
+    {
+        motorFrontLeft.setMode(mode);
+        motorBackLeft.setMode(mode);
+        motorFrontRight.setMode(mode);
+        motorBackRight.setMode(mode);
+    }
     public void setMotorSpeeds (double x, double y, double rx) {
         // Denominator is the largest motor power (absolute value) or 1
         // This ensures all the powers maintain the same ratio, but only when
@@ -95,6 +105,33 @@ public class Drive {
         motorBackLeft.setPower(backLeftPower);
         motorFrontRight.setPower(frontRightPower);
         motorBackRight.setPower(backRightPower);
+    }
+    public void setMotorPowerForEncoder(double x, double y, double rx){
+        double denominator = -1*(Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1));
+        double frontLeftPower = (y + x + rx) / denominator;
+        double backLeftPower = (y - x + rx) / denominator;
+        double frontRightPower = (y - x - rx) / denominator;
+        double backRightPower = (y + x - rx) / denominator;
+
+        motorFrontLeft.setPower(frontLeftPower);
+        motorBackLeft.setPower(backLeftPower);
+        motorFrontRight.setPower(frontRightPower);
+        motorBackRight.setPower(backRightPower);
+    }
+    public void setMotorLengthForEncoder(double length, double x, double y, double rx){
+        double denominator = -1*(Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1));
+        double frontLeftRatio = (y + x + rx) / denominator;
+        double backLeftRatio = (y - x + rx) / denominator;
+        double frontRightRatio = (y - x - rx) / denominator;
+        double backRightRatio = (y + x - rx) / denominator;
+        int frontRightPos = (int)(length*frontRightRatio);
+        int frontLeftPos = (int)(length*frontLeftRatio);
+        int backRightPos = (int)(length*backRightRatio);
+        int backLeftPos = (int)(length*backLeftRatio);
+        motorFrontLeft.setTargetPosition(frontLeftPos);
+        motorBackLeft.setTargetPosition(backLeftPos);
+        motorFrontRight.setTargetPosition(frontRightPos);
+        motorBackRight.setTargetPosition(backRightPos);
     }
     public void setBoost(boolean boost1){
         boost = boost1;
@@ -127,5 +164,57 @@ public class Drive {
         }else{
             servoHook.setPosition(0);
         }
+        
+    }
+
+    public double getAngle (double y, double x) {
+        return Math.atan2(y,x);
+    }
+
+    public double getMagnitude (double y, double x) {
+        return Math.sqrt (x*x + y*y);
+    }
+
+    public void setWheelSpeedsAutoStrafeAndTurn (double angle, double magnitude, double turn) {
+        double frAndBl = Math.abs(Math.sin(angle - 0.25 * Math.PI) * magnitude + turn);
+        double flAndBr = Math.abs(Math.sin(angle + 0.25 * Math.PI) * magnitude + turn);
+
+        double denominator = -1 * (Math.max (Math.max(frAndBl, flAndBr), 1));
+
+        double frontLeftPower = flAndBr / denominator;
+        double backLeftPower = frAndBl / denominator;
+        double frontRightPower = frAndBl / denominator;
+        double backRightPower = flAndBr / denominator;
+
+        motorFrontLeft.setPower(frontLeftPower);
+        motorBackLeft.setPower(backLeftPower);
+        motorFrontRight.setPower(frontRightPower);
+        motorBackRight.setPower(backRightPower);
+    }
+
+    public OpenGLMatrix transformGamepadToDirection(OpenGLMatrix gamepad, OpenGLMatrix robotDir){
+        double gamepad_x = gamepad.get(0,0); //x,y,z
+        double gamepad_y = gamepad.get(0,1); //x,y,z
+        double gamepad_angle = getAngle(gamepad_x, gamepad_y);
+
+        double robotDir_x = robotDir.get(0,0); //x,y,z
+        double robotDir_y = robotDir.get(0,1); //x,y,z
+        double robotDir_angle = getAngle(robotDir_x, robotDir_y);
+
+        return gamepad.rotated(AngleUnit.DEGREES, 90, 0,0, 1);
+    }
+
+    public void directionForLength(double length, double dirX, double dirY, double dirRx){
+        setMotorsMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setMotorPowerForEncoder(dirX, dirY, dirRx);
+        setMotorLengthForEncoder(length, dirX, dirY, dirRx);
+        setMotorsMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+    public void stopWheels () {
+        motorFrontLeft.setPower(0);
+        motorBackLeft.setPower(0);
+        motorFrontRight.setPower(0);
+        motorBackRight.setPower(0);
     }
 }
