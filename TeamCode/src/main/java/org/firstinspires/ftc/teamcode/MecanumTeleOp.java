@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.Drive;
+import org.firstinspires.ftc.teamcode.subsystems.Lift;
 
 @TeleOp
 public class MecanumTeleOp extends LinearOpMode {
@@ -14,7 +15,7 @@ public class MecanumTeleOp extends LinearOpMode {
 
         // Get the subsystems initialized
         Drive drive = Drive.init(hardwareMap, telemetry);
-
+        Lift lift = Lift.init(hardwareMap, telemetry);
 
         waitForStart();
 
@@ -34,6 +35,8 @@ public class MecanumTeleOp extends LinearOpMode {
             }
             // Send the inputs to the subsystems
             drive.setMotorSpeeds(x, y, rx);
+            lift.updateDownButton(gamepad1.dpad_down);
+            lift.updateUpButton(gamepad1.dpad_up);
         }
     }
 }
