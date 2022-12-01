@@ -33,10 +33,10 @@ public class MecanumTeleOp extends LinearOpMode {
             if(gamepad1.dpad_right){
                 drive.directionForLength(2000, 1, 0,0);
             }
+
             // Send the inputs to the subsystems
             drive.setMotorSpeeds(x, y, rx);
-            lift.updateDownButton(gamepad1.dpad_down);
-            lift.updateUpButton(gamepad1.dpad_up);
+            lift.updatePosition(gamepad1.dpad_up, gamepad1.dpad_down);
         }
     }
 }
