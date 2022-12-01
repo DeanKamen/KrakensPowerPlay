@@ -2,39 +2,50 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.Servo;
-
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.subsystems.Drive;
-import org.firstinspires.ftc.teamcode.subsystems.Lift;
+import org.firstinspires.ftc.teamcode.subsystems.*;
 
 @TeleOp
 public class TestComponent extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Lift lift = Lift.init(hardwareMap, telemetry);
+        Hook hook = Hook.init(hardwareMap, telemetry);
 
-        Servo servoHook = hardwareMap.get(Servo.class, "cone_hook");
-        double servohookpos = 0.0;
         boolean noBumper = true;
 
-        servoHook.setDirection(Servo.Direction.REVERSE);
+        telemetry.addData ("Runtime:", "%f.1 seconds", this.getRuntime());
+        telemetry.addData ("Current Press:", "N/A");
+        telemetry.update();
+
+
         waitForStart();
         getRuntime();
         if (isStopRequested()) return;
 
         while (opModeIsActive()) {
             if (gamepad1.right_bumper && noBumper) {
-                servohookpos += 0.01;
+                telemetry.addData("Current Press:","New Right Bumper");
+                hook.bumpUp();
                 noBumper = false;
             } else if (gamepad1.left_bumper && noBumper) {
-                servohookpos -= 0.01;
+                telemetry.addData("Current Press:","New Left Bumper");
+                hook.bumpDown();
                 noBumper = false;
             } else {
+                telemetry.addData("Current Press:","N/A");
                 noBumper = true;
             }
-            servoHook.setPosition(servohookpos);
-            lift.updatePosition(gamepad1.dpad_up, gamepad1.dpad_down);
+
+            telemetry.addLine ("In while loop.");
+            if (gamepad1.dpad_up) {
+                telemetry.addLine ("USER PUSHED DPAD UP");
+                lift.moveUp();
+            }
+
+            if (gamepad1.dpad_down) {
+                telemetry.addLine("USER PUSHED DPAD DOWN");
+                lift.moveDown();
+            }
             telemetry.update();
         }
     }
