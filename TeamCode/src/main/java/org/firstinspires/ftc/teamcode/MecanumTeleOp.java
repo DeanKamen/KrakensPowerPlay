@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.Drive;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
+import org.firstinspires.ftc.teamcode.subsystems.Hook;
 
 @TeleOp
 public class MecanumTeleOp extends LinearOpMode {
@@ -16,7 +17,7 @@ public class MecanumTeleOp extends LinearOpMode {
         // Get the subsystems initialized
         Drive drive = Drive.init(hardwareMap, telemetry);
         Lift lift = Lift.init(hardwareMap, telemetry);
-
+        Hook hook = Hook.init(hardwareMap, telemetry);
         waitForStart();
 
         if (isStopRequested()) return;
@@ -29,19 +30,16 @@ public class MecanumTeleOp extends LinearOpMode {
             drive.setBoost(gamepad1.left_stick_button);
             drive.setBrake(gamepad1.left_trigger);
             drive.setClawState(gamepad1.right_trigger > 0.01);
-            drive.setHookState(gamepad1.right_bumper);
-            if(gamepad1.dpad_right){
-                drive.directionForLength(2000, 1, 0,0);
-            }
-
+            hook.toggleHook(gamepad1.a);
+            lift.move_conditionally(gamepad1.dpad_up,gamepad1.dpad_down);
             // Send the inputs to the subsystems
             drive.setMotorSpeeds(x, y, rx);
-            if (gamepad1.dpad_up) {
-                lift.moveUp();
-            }
-            if (gamepad1.dpad_down) {
-                lift.moveDown();
-            }
+            //if (gamepad1.dpad_up) {
+            //    lift.moveUp();
+            //}
+            //if (gamepad1.dpad_down) {
+            //    lift.moveDown();
+            //}
         }
     }
 }

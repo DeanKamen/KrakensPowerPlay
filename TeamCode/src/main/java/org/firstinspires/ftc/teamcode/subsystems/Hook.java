@@ -11,11 +11,12 @@ public class Hook {
     double hookServoPosition = 0.0;
     boolean subsystemExists = false;
     Telemetry telemetry;
+    boolean prev_state;
 
     public static Hook init (HardwareMap hardwareMap, Telemetry telemetry) {
         Hook hook = new Hook();
         hook.telemetry = telemetry;
-
+        hook.prev_state = false;
         try {
             hook.servoHook = hardwareMap.get(Servo.class, "cone_hook");
             hook.servoHook.setDirection(Servo.Direction.REVERSE);
@@ -39,5 +40,15 @@ public class Hook {
         hookServoPosition -= 0.01;
         telemetry.addLine("Hook Subsystem: bumping down to "+hookServoPosition);
         servoHook.setPosition(hookServoPosition);
+    }
+    public void toggleHook(boolean button){
+        if(button){
+            if(prev_state){
+                servoHook.setPosition(0);
+            }else{
+                servoHook.setPosition(1.0);
+            }
+            prev_state = !prev_state;
+        }
     }
 }

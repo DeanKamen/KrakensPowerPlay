@@ -21,7 +21,6 @@ public class Drive {
     private DcMotor motorBackRight;
 
     private Servo servoClaw;
-    private Servo servoHook;
 
     private boolean boost;
     private boolean brake;
@@ -53,8 +52,6 @@ public class Drive {
         drive.setMotorBraking();
 
         drive.servoClaw = hardwareMap.get(Servo.class, "claw");
-        drive.servoHook = hardwareMap.get(Servo.class, "cone_hook");
-        drive.servoHook.setDirection(Servo.Direction.REVERSE);
         // Return the initialized drive.
         return drive;
     }
@@ -85,7 +82,7 @@ public class Drive {
         // This ensures all the powers maintain the same ratio, but only when
         // at least one is out of the range [-1, 1]
 
-        double denominator = -1*(Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1));
+        double denominator = (Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1));
         if(!boost || slowmode){
             denominator = denominator*1.4;
         }
@@ -157,14 +154,6 @@ public class Drive {
         } else {
             servoClaw.setPosition(0);
         }
-    }
-    public void setHookState(boolean buttonDown){
-        if (buttonDown) {
-            servoHook.setPosition(0.17);
-        }else{
-            servoHook.setPosition(0);
-        }
-        
     }
 
     public double getAngle (double y, double x) {

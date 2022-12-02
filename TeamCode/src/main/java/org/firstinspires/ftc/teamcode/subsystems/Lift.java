@@ -15,9 +15,8 @@ public class Lift {
     private DcMotor liftMotor;
     private Telemetry telemetry;
     boolean prevUpButtonState;
-    boolean currUpButtonState;
     boolean prevDownButtonState;
-    boolean currDownButtonState;
+
     int desiredLiftState; //0,1,2,3
     int prevLiftState;
 
@@ -51,11 +50,9 @@ public class Lift {
         lift.liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift.tel.update();
         // The previous line sets the current position to zero so make sure the lift is all the way down!
-        // lift.liftMotor.setTargetPosition(0);
-        // lift.liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        // Don't need to do the stuff above right now.
 
         lift.prevUpButtonState = false;
+        lift.prevDownButtonState = false;
         lift.desiredLiftState = 0;
         lift.prevLiftState = 0;
 
@@ -101,5 +98,16 @@ public class Lift {
         liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftMotor.setPower(MOTOR_SPEED);
         tel.update();
+    }
+
+    public void move_conditionally(boolean up_button, boolean down_button){
+
+        if(up_button && !prevUpButtonState){
+            moveUp();
+        }else if(down_button && !prevDownButtonState){
+            moveDown();
+        }
+        prevDownButtonState = down_button;
+        prevUpButtonState = up_button;
     }
 }

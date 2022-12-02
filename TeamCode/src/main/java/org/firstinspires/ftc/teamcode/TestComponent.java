@@ -37,6 +37,7 @@ public class TestComponent extends LinearOpMode {
             }
 
             telemetry.addLine ("In while loop.");
+            /*
             if (gamepad1.dpad_up) {
                 telemetry.addLine ("USER PUSHED DPAD UP");
                 lift.moveUp();
@@ -46,7 +47,10 @@ public class TestComponent extends LinearOpMode {
                 telemetry.addLine("USER PUSHED DPAD DOWN");
                 lift.moveDown();
             }
+            */
+            lift.move_conditionally(gamepad1.dpad_up,gamepad1.dpad_down);
             telemetry.update();
+            hook.toggleHook(gamepad1.cross);
         }
     }
 }
