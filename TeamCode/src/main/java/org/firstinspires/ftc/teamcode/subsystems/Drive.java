@@ -19,9 +19,6 @@ public class Drive {
     private DcMotor motorBackLeft;
     private DcMotor motorFrontRight;
     private DcMotor motorBackRight;
-
-    private Servo servoClaw;
-
     private boolean boost;
     private boolean brake;
     private boolean slowmode;
@@ -31,6 +28,8 @@ public class Drive {
      * to the driver station.
      */
     private Telemetry telemetry;
+
+    private boolean subsystemExists = false;
 
     /**
      * Initializes and returns an instance of the Drive subsystem that an opmode can use.
@@ -51,9 +50,13 @@ public class Drive {
         drive.motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
         drive.setMotorBraking();
 
-        drive.servoClaw = hardwareMap.get(Servo.class, "claw");
+        drive.subsystemExists = true;
         // Return the initialized drive.
         return drive;
+    }
+
+    public boolean exists () {
+        return subsystemExists;
     }
 
     public void setMotorFloating()
@@ -143,16 +146,6 @@ public class Drive {
         }else{
             slowmode = false;
             brake = false;
-        }
-    }
-
-    public void setClawState(boolean buttonDown){
-        telemetry.addData("Claw Position" , servoClaw.getPosition());
-        telemetry.update();
-        if (buttonDown) {
-            servoClaw.setPosition(0.9);
-        } else {
-            servoClaw.setPosition(0);
         }
     }
 
