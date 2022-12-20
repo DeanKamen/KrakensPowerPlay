@@ -15,6 +15,7 @@ public class MecanumTeleOp extends LinearOpMode {
         Claw claw = Claw.init(hardwareMap, telemetry);
         Lift lift = Lift.init(hardwareMap, telemetry);
         Hook hook = Hook.init(hardwareMap, telemetry);
+        WebcamObjectDetection camera = WebcamObjectDetection.init(hardwareMap, telemetry);
 
         telemetry.addData ("Subsystem Status:", "%s", "Drive="+drive.exists()+", Claw="+claw.exists()+", Lift="+lift.exists()+", Hook="+hook.exists());
         boolean dpadUpPressed = false;
@@ -67,7 +68,7 @@ public class MecanumTeleOp extends LinearOpMode {
                 //}
             }
 
-
+            String objectRecognized = camera.getRecognizedObject();
         }
     }
 }

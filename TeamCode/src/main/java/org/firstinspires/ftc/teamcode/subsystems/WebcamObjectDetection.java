@@ -85,8 +85,8 @@ public class WebcamObjectDetection {
 
     //This is Currently Hunter Messners Key
     private static final String VUFORIA_KEY =
-            "Ab2KZyn/////AAABmeuSPzBMbUdQpilf1SvrgHs5NsXkqaqiLJjGAaaP1bbe/4WVCKrUv0Fo3DFkiR7yWAD2dfvIXXOI8GVn0mC2SMudg+aSqD7VvNPzFmNuryyQsZ5N/p9WKddwzOugUUWkmDugGPX19+JDjKFcdU6wOSSjrmglIQz5/yZkuiXMK0kiDCAsVAJkPDoz83VKbXtuK9ItbT0Q80HAwN7GP8oB8nJ1gBPqKZYwvIQse9DLPLIsoSx0RvVGW8i+RgbgM/wg+AnvGJeOxNDyuoPvMDzNURTVeoe9qr+JIZlJMVEF9/pWE4zU4dH4PZ6EhVu+/WvpRdchWvxwLTB9omxNbxjDlKN7CFM9dSFYcQGcxxGT2f/K";
-
+            //"Ab2KZyn/////AAABmeuSPzBMbUdQpilf1SvrgHs5NsXkqaqiLJjGAaaP1bbe/4WVCKrUv0Fo3DFkiR7yWAD2dfvIXXOI8GVn0mC2SMudg+aSqD7VvNPzFmNuryyQsZ5N/p9WKddwzOugUUWkmDugGPX19+JDjKFcdU6wOSSjrmglIQz5/yZkuiXMK0kiDCAsVAJkPDoz83VKbXtuK9ItbT0Q80HAwN7GP8oB8nJ1gBPqKZYwvIQse9DLPLIsoSx0RvVGW8i+RgbgM/wg+AnvGJeOxNDyuoPvMDzNURTVeoe9qr+JIZlJMVEF9/pWE4zU4dH4PZ6EhVu+/WvpRdchWvxwLTB9omxNbxjDlKN7CFM9dSFYcQGcxxGT2f/K";
+            "Abg3PNz/////AAAAGWNcVXMODUM7pQASJjERHvgGsKSLk01jQ8GUfwIIhXvFq3v9f88OkuUy0PzNTC7QEZoQqTTzBW8ZP/cs8Y2l374MhQsGSfKBvBYjaO73FoHIZWhVoLIVw4AHC1PDOOFwku6pNk/GDx4n/a0hXruBenwO5d7PNFOPf8aC9Irao/OtA7Ot/6p8I8VtgmnWA/YHlgy2s9+JgGXps3MT3pvLCQe8kI/b/emCXGPA5khcD0Gmd4/Kp1KjVz/1hGQQMUngTeBxajvRaj5ACIKR7V8DsdGFZFykqkXlFNUluO583awvbtDPJ4OdAvlM+w8qM1+ILm++Tq27/QOuftKBKEBJTZcL3iWhRagxWd8sODDtgdYq";
     /**
      * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
      * localization engine.
@@ -99,11 +99,22 @@ public class WebcamObjectDetection {
      */
     private TFObjectDetector tfod;
 
-    public String getRecognizedObject(HardwareMap hardwareMap, Telemetry telemetry) {
+    private HardwareMap hardwareMap;
+    private Telemetry telemetry;
+    public static WebcamObjectDetection init (HardwareMap hardwareMap, Telemetry telemetry) {
+        WebcamObjectDetection cam = new WebcamObjectDetection();
+        cam.telemetry = telemetry;
+        cam.hardwareMap = hardwareMap;
+        cam.initVuforia(cam.hardwareMap, cam.telemetry);
+        cam.initTfod(cam.hardwareMap, cam.telemetry);
+        // Return the initialized drive.
+        return cam;
+    }
+
+    public String getRecognizedObject() {
         // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
         // first.
-        initVuforia(hardwareMap, telemetry);
-        initTfod(hardwareMap, telemetry);
+
 
         /**
          * Activate TensorFlow Object Detection before we wait for the start command.
@@ -166,7 +177,8 @@ public class WebcamObjectDetection {
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
+        //parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1"); //webcam
+        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK; //phone cam
 
         //  Instantiate the Vuforia engine
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
